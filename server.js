@@ -25,7 +25,7 @@ next();
 });
 
 app.get('/',(req,res) => {
-  res.render('home.hbs',{
+  res.render('Home.hbs',{
     pageTitle:'Home Page',
     welcomeMessage:'Welcome to Music Libs'
   });
