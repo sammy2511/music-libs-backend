@@ -1,14 +1,37 @@
 let express = require('express')
 let request = require('request')
 let querystring = require('querystring')
-
+const hbs = require('hbs');
+const fs = require('fs');
 let app = express()
+hbs.registerPartials(__dirname+'/views');
+app.set('view engine','hbs');
+
 
 let redirect_uri =
   process.env.REDIRECT_URI ||
   'http://localhost:8888/callback/'
 
-app.get('/', function(req, res) {
+  app.use((req,res,next) => {
+  var now = new Date().toString();
+  var log = `${now} : ${req.method} : ${req.url}`;
+
+  fs.appendFile('server.log',log + '\n',(error) => {
+    if (error) {
+      console.log('Unable to append in server.log');
+    }
+  });
+next();
+});
+
+app.get('/',(req,res) => {
+  res.render('home.hbs',{
+    pageTitle:'Home Page',
+    welcomeMessage:'Welcome to Music Libs'
+  });
+});
+
+app.get('/login', function(req, res) {
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
